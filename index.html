@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tkCJHZlMli51MHNeIIZARc+ILpUC04wTWRJVgeIccxw=' 'sha256-3UyAx+JyboRs/AOl0uy7NXXsgd7qvkgWqdmclOl4wig='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
-<meta name="build" content="2026-09-29.c617ae6d">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tkCJHZlMli51MHNeIIZARc+ILpUC04wTWRJVgeIccxw=' 'sha256-mFvsV+4/nmIOuQ8XhdnCaQOpReztWDINireANgQTLdM='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="build" content="2026-09-29.1c6ebc06">
 </head>
 <body>
 <title>Proposal Dashboard</title>
@@ -523,9 +523,11 @@ ul.names .rel{display:block;margin-top:4px;font:500 13px/1.4 var(--sans);letter-
 .ev li .src{margin-left:4px}
 @media(max-width:760px){.dz{grid-template-columns:1fr}}
 .vbars{display:flex;gap:16px;align-items:flex-end;height:170px;padding-top:6px}
-.vb{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%;max-width:120px;min-width:0}
-.vb b{font:800 21px/1 var(--sans);letter-spacing:-.03em;margin-bottom:7px}
-.vb i{display:block;height:var(--h);background:var(--ink);transform-origin:bottom;transition:transform .9s cubic-bezier(.3,.6,.2,1) var(--d)}
+/* the bar and its number sit in .vt, which holds the column's height less the year label, so --h is a share of the same height in every column */
+.vb{flex:1;display:flex;flex-direction:column;height:100%;max-width:120px;min-width:0}
+.vt{flex:1;min-height:0;position:relative;margin-top:28px}
+.vb b{position:absolute;left:0;bottom:calc(var(--h) + 7px);font:800 21px/1 var(--sans);letter-spacing:-.03em;white-space:nowrap}
+.vb i{position:absolute;left:0;right:0;bottom:0;display:block;height:var(--h);background:var(--ink);transform-origin:bottom;transition:transform .9s cubic-bezier(.3,.6,.2,1) var(--d)}
 .vb.plan i{background:repeating-linear-gradient(135deg,var(--ink3) 0 1.5px,transparent 1.5px 6px);border:1px solid var(--ink3)}
 .vb span{font:600 11px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-top:7px;min-height:2.6em}
 .hbars{display:grid;gap:9px}
@@ -534,6 +536,7 @@ ul.names .rel{display:block;margin-top:4px;font:500 13px/1.4 var(--sans);letter-
 .hb i{display:block;height:10px;width:var(--w);background:var(--ink);transform-origin:left;transition:transform .9s cubic-bezier(.3,.6,.2,1) var(--d)}
 .hb b{font:700 11px/1 var(--mono);white-space:nowrap}
 @media(max-width:520px){.hb{grid-template-columns:104px minmax(0,1fr) auto}}
+@media(max-width:560px){.hb span{white-space:normal;overflow:visible;text-overflow:clip}}
 .rng .rb.own{fill:var(--ink)}
 .stos{display:flex;gap:16px;flex-wrap:wrap}
 .sto{display:inline-flex;gap:7px;align-items:center;font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
@@ -3365,7 +3368,7 @@ const TitanTab = (() => {
           <text x="${cx}" y="${cy - 2}" class="big" text-anchor="middle">24 h</text><text x="${cx}" y="${cy + 18}" class="tkl" text-anchor="middle">max run time</text>
         </svg><figcaption class="crew">${Kit.ICO.person}${Kit.ICO.person}<span><b>${v('operators')}</b> operators · setup <b>${v('setup')}</b> · <b>${v('mob')}</b> prints per mobilization</span></figcaption></figure>`;
       g += panel('s4', 'Crew and run time', '', ring, cite('operators'));
-      const T = scale({ min: 0, max: 130, step: 10, label: 'Operational temperature, 32°F to 113°F', bands: [{ a: 32, b: 113, cls: 'ok' }], marks: [{ v: 32, label: '32°F' }, { v: 113, label: '113°F' }], fmt: (x) => x + '°' });
+      const T = scale({ min: 0, max: 140, step: 20, label: 'Operational temperature, 32°F to 113°F', bands: [{ a: 32, b: 113, cls: 'ok' }], marks: [{ v: 32, label: '32°F' }, { v: 113, label: '113°F' }], fmt: (x) => x + '°' });
       const Wn = scale({ min: 0, max: 45, step: 5, label: 'Max operational winds: sustained 20 mph, gusts 30 mph', bands: [{ a: 0, b: 20, cls: 'ok' }, { a: 20, b: 30, cls: 'ok2' }], marks: [{ v: 20, label: 'sustained 20' }, { v: 30, label: 'gusts 30' }] });
       const Gr = scale({ min: 0, max: 30, step: 5, label: 'Deployable grade 15%', bands: [{ a: 0, b: 15, cls: 'ok' }], marks: [{ v: 15, label: '15%' }], fmt: (x) => x + '%' });
       g += panel('s12', 'Operating conditions', '',
@@ -3613,7 +3616,7 @@ const ProfileTab = (() => {
       const vis = (d) => {
         if (d.key === 'volume' && b && b.series) {
           const pts = b.series.points, nx = b.series.next, max = Math.max(...pts.map((p) => p[1]), nx ? nx.value : 0);
-          const cols = pts.map(([l, v], i) => `<div class="vb" style="--h:${((v / max) * 100).toFixed(1)}%;--d:${i * 90}ms"><b>${fmt(v)}</b><i></i><span>${esc(l)}</span></div>`).join('') + (nx ? `<div class="vb plan" style="--h:${((nx.value / max) * 100).toFixed(1)}%;--d:${pts.length * 90}ms"><b>${fmt(nx.value)}+</b><i></i><span>${esc(nx.label)}</span></div>` : '');
+          const cols = pts.map(([l, v], i) => `<div class="vb" style="--h:${((v / max) * 100).toFixed(1)}%;--d:${i * 90}ms"><div class="vt"><b>${fmt(v)}</b><i></i></div><span>${esc(l)}</span></div>`).join('') + (nx ? `<div class="vb plan" style="--h:${((nx.value / max) * 100).toFixed(1)}%;--d:${pts.length * 90}ms"><div class="vt"><b>${fmt(nx.value)}+</b><i></i></div><span>${esc(nx.label)}</span></div>` : '');
           return `<div class="vbars" role="img" aria-label="${esc(b.series.label)}">${cols}</div><div class="cap">${esc(b.series.label)}. ${srcOf(b.series.src)}${nx ? ' ' + srcOf(nx.src) : ''}</div>`;
         }
         if (d.key === 'volume' && d.vol) return `<b class="bigd">${fmt(d.vol)}</b>`;
