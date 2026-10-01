@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tkCJHZlMli51MHNeIIZARc+ILpUC04wTWRJVgeIccxw=' 'sha256-4hCl0oDpUopL9V2ehCugdmDMDAJoikjRCvAhB2oJaI8='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
-<meta name="build" content="2026-09-30.34305a65">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-tkCJHZlMli51MHNeIIZARc+ILpUC04wTWRJVgeIccxw=' 'sha256-bcDwK9MqKolw4/DDKUVrdI/SM3Scvmhd+sjFPIcvW9A='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="build" content="2026-09-30.14106272">
 </head>
 <body>
 <title>Proposal Dashboard</title>
@@ -3462,8 +3462,11 @@ const TitanTab = (() => {
     out += group('The record', g);
 
     {
-      const rows = Object.entries(F).map(([k, f]) => `<tr><th scope="row">${f.v ? `<b>${esc(f.v)}</b> ` : ''}${esc(f.label)}</th><td>“${esc(f.quote)}”</td><td>${s(f.src)}</td></tr>`).join('');
-      out += `<div class="grp"><h2 class="gh">Figures and sources</h2><p class="gn">Pages read ${fdate(I.read)}.</p>
+
+      const rd = (k) => (S[k] && S[k].read && S[k].read !== I.read ? S[k].read : '');
+      const rows = Object.entries(F).map(([k, f]) => `<tr><th scope="row">${f.v ? `<b>${esc(f.v)}</b> ` : ''}${esc(f.label)}</th><td>“${esc(f.quote)}”</td><td>${s(f.src)}${rd(f.src) ? `, read ${fdate(rd(f.src))}` : ''}</td></tr>`).join('');
+      const later = Object.values(F).some((f) => rd(f.src));
+      out += `<div class="grp"><h2 class="gh">Figures and sources</h2><p class="gn">Pages read ${fdate(I.read)}${later ? ', unless a row gives a later date' : ''}.</p>
         <details class="ledgerd"><summary>Show all figures and their sources</summary><div class="ledger"><table><thead><tr><th scope="col">Figure</th><th scope="col">The source's words</th><th scope="col">Source</th></tr></thead><tbody>${rows}</tbody></table></div></details></div>`;
     }
 
